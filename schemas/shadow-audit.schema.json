@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reliance-compiler.local/schemas/shadow-audit.schema.json",
+  "title": "Shadow Audit Record",
+  "type": "object", "additionalProperties": false,
+  "required": ["audit_id", "task", "original_reliance_packet", "sampled_reason", "independent_verification", "outcome", "missed_failure", "severity", "effect_on_reliance_baseline"],
+  "properties": {
+    "audit_id": {"type": "string", "minLength": 1}, "task": {"type": "string", "minLength": 1},
+    "original_reliance_packet": {"type": "object"}, "sampled_reason": {"type": "string"},
+    "independent_verification": {"type": "object"}, "outcome": {"enum": ["confirmed", "missed", "inconclusive"]},
+    "missed_failure": {"type": ["string", "null"]}, "severity": {"enum": ["none", "low", "medium", "high", "critical"]},
+    "effect_on_reliance_baseline": {"enum": ["none", "review", "lower_reliance", "recalibrate_policy"]}
+  }
+}

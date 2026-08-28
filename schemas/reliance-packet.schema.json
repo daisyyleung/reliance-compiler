@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reliance-compiler.local/schemas/reliance-packet.schema.json",
+  "title": "Reliance Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "input", "sources", "claims", "claim_relations", "evidence", "assumptions", "contradictions", "failure_modes", "verification_options", "minimum_verification_set", "reliance_envelope", "human_verification_burden", "residual_uncertainties", "limitations", "recommended_route", "created_at"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "input": {"type": "object"},
+    "task_id": {"type": "string"},
+    "policy_id": {"type": "string"},
+    "policy": {"$ref": "policy.schema.json"},
+    "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "claim_relations": {"type": "array", "items": {"$ref": "#/$defs/relation"}},
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "assumptions": {"type": "array", "items": {"$ref": "#/$defs/assumption"}},
+    "contradictions": {"type": "array", "items": {"$ref": "#/$defs/contradiction"}},
+    "failure_modes": {"type": "array", "items": {"$ref": "#/$defs/failure_mode"}},
+    "verification_options": {"type": "array", "items": {"$ref": "#/$defs/verification_option"}},
+    "minimum_verification_set": {"$ref": "#/$defs/minimum_set"},
+    "reliance_envelope": {"$ref": "#/$defs/envelope"},
+    "human_verification_burden": {"$ref": "#/$defs/burden"},
+    "residual_uncertainties": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "recommended_route": {"enum": ["RELY", "VERIFY_FIRST", "PREPARE_FOR_APPROVAL", "HUMAN_DECISION_REQUIRED", "ABSTAIN"]},
+    "created_at": {"type": "string", "minLength": 1},
+    "stored_plan": {"$ref": "#/$defs/minimum_set"}
+  },
+  "$defs": {
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "kind", "locator", "state"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1},
+        "state": {"enum": ["observed", "reconstructed", "inferred", "unavailable", "not_inspected"]},
+        "description": {"type": "string"},
+        "provenance": {"type": "string"},
+        "inspected_at": {"type": "string"}
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_id", "source_id", "state", "kind", "locator", "confidence_category", "provenance"],
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "source_id": {"type": "string", "minLength": 1},
+        "state": {"enum": ["observed", "reconstructed", "inferred", "unavailable", "not_inspected"]},
+        "kind": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1},
+        "content": {},
+        "description": {"type": "string"},
+        "confidence_category": {"enum": ["direct", "corroborated", "indirect", "unknown"]},
+        "provenance": {"type": "string", "minLength": 1},
+        "inspected_at": {"type": "string"}, "inspection_ref": {"type": "string"}
+      }
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claim_id", "text", "type", "materiality", "evidence_ids", "evidence_state", "verification_status", "assumptions", "dependencies", "contradiction_ids", "load_bearing", "reliance_status"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "text": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1},
+        "materiality": {"enum": ["low", "medium", "high", "critical"]},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "evidence_state": {"enum": ["observed", "reconstructed", "inferred", "unavailable", "not_inspected"]},
+        "verification_status": {"enum": ["not_checked", "supported", "confirmed", "contradicted", "unresolved", "unavailable"]},
+        "assumptions": {"type": "array", "items": {"type": "string"}},
+        "dependencies": {"type": "array", "items": {"type": "string"}},
+        "contradiction_ids": {"type": "array", "items": {"type": "string"}},
+        "load_bearing": {"type": "boolean"},
+        "reliance_status": {"enum": ["RELY", "RELY_WITH_CONDITION", "VERIFY", "DO_NOT_RELY", "ABSTAIN"]},
+        "conditions": {"type": "array", "items": {"type": "string"}},
+        "rationale": {"type": "string"}
+      }
+    },
+    "relation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["relation_id", "from_claim_id", "to_claim_id", "relation"],
+      "properties": {
+        "relation_id": {"type": "string", "minLength": 1},
+        "from_claim_id": {"type": "string"}, "to_claim_id": {"type": "string"},
+        "relation": {"enum": ["depends_on", "supports", "contradicts"]}
+      }
+    },
+    "assumption": {
+      "type": "object", "additionalProperties": false,
+      "required": ["assumption_id", "affected_claim_ids", "assumption", "why_needed", "evidence_support", "materiality", "verification_method", "status"],
+      "properties": {
+        "assumption_id": {"type": "string"}, "affected_claim_ids": {"type": "array", "items": {"type": "string"}},
+        "assumption": {"type": "string", "minLength": 1}, "why_needed": {"type": "string"},
+        "evidence_support": {"type": "array", "items": {"type": "string"}},
+        "materiality": {"enum": ["low", "medium", "high", "critical"]},
+        "verification_method": {"type": "string"},
+        "status": {"enum": ["supported", "unsupported", "partially_supported", "not_testable", "superseded"]}
+      }
+    },
+    "contradiction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contradiction_id", "claim_ids", "evidence_ids", "description", "status"],
+      "properties": {
+        "contradiction_id": {"type": "string"}, "claim_ids": {"type": "array", "items": {"type": "string"}},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}}, "description": {"type": "string"},
+        "status": {"enum": ["open", "resolved", "unresolved"]}, "resolution_evidence_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "failure_mode": {
+      "type": "object", "additionalProperties": false,
+      "required": ["failure_id", "description", "severity", "affected_claim_ids", "detectable_by", "currently_covered", "residual_risk"],
+      "properties": {
+        "failure_id": {"type": "string"}, "description": {"type": "string"},
+        "severity": {"enum": ["low", "medium", "high", "critical"]}, "affected_claim_ids": {"type": "array", "items": {"type": "string"}},
+        "detectable_by": {"type": "array", "items": {"type": "string"}}, "currently_covered": {"type": "boolean"},
+        "residual_risk": {"enum": ["none", "low", "medium", "high", "critical", "unknown"]}, "required": {"type": "boolean"}
+      }
+    },
+    "verification_option": {
+      "type": "object", "additionalProperties": false,
+      "required": ["verification_id", "type", "target_claim_ids", "target_failure_ids", "automated_or_human", "estimated_cost", "evidence_required", "expected_information_gain", "limitations", "available"],
+      "properties": {
+        "verification_id": {"type": "string"}, "type": {"type": "string"},
+        "target_claim_ids": {"type": "array", "items": {"type": "string"}}, "target_failure_ids": {"type": "array", "items": {"type": "string"}},
+        "automated_or_human": {"enum": ["automated", "human"]}, "estimated_cost": {"enum": ["instant", "<10s", "10-30s", "30-60s", "1-3m", ">3m", "unknown"]},
+        "evidence_required": {"type": "array", "items": {"type": "string"}}, "expected_information_gain": {"enum": ["none", "low", "medium", "high", "critical", "unknown"]},
+        "limitations": {"type": "array", "items": {"type": "string"}}, "available": {"type": "boolean"}
+      }
+    },
+    "minimum_set": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selected_verification_ids", "covered_failure_ids", "covered_claim_ids", "status", "objective"],
+      "properties": {
+        "selected_verification_ids": {"type": "array", "items": {"type": "string"}}, "covered_failure_ids": {"type": "array", "items": {"type": "string"}},
+        "covered_claim_ids": {"type": "array", "items": {"type": "string"}}, "status": {"enum": ["exact", "heuristic", "policy-constrained", "incomplete"]},
+        "uncovered_failure_ids": {"type": "array", "items": {"type": "string"}},
+        "uncovered_claim_ids": {"type": "array", "items": {"type": "string"}},
+        "uncovered_verification_types": {"type": "array", "items": {"type": "string"}},
+        "selection_method": {"enum": ["exhaustive", "greedy", "none"]},
+        "objective": {"type": "string"}, "estimated_human_cost": {"enum": ["instant", "<10s", "10-30s", "30-60s", "1-3m", ">3m", "unknown"]}, "estimated_human_cost_seconds": {"type": "integer", "minimum": 0}
+      }
+    },
+    "envelope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claim_statuses", "conditions", "prohibited_reliance"],
+      "properties": {
+        "claim_statuses": {"type": "object", "additionalProperties": {"enum": ["RELY", "RELY_WITH_CONDITION", "VERIFY", "DO_NOT_RELY", "ABSTAIN"]}},
+        "conditions": {"type": "array", "items": {"type": "string"}}, "prohibited_reliance": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "burden": {
+      "type": "object", "additionalProperties": false,
+      "required": ["level", "label", "rationale"],
+      "properties": {
+        "level": {"type": "integer", "minimum": 0, "maximum": 5}, "label": {"enum": ["NO_MANUAL_CHECK", "GLANCE", "REVIEW_EVIDENCE", "VERIFY_SOURCE", "HUMAN_JUDGMENT", "HUMAN_ONLY"]}, "rationale": {"type": "string"},
+        "selected_human_verification_ids": {"type": "array", "items": {"type": "string"}}, "effort_band": {"enum": ["instant", "<10s", "10-30s", "30-60s", "1-3m", ">3m", "unknown"]}
+      }
+    }
+  }
+}

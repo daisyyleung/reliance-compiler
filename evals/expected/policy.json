@@ -1,0 +1,1 @@
+{"policy_id":"p-example","task":"meeting_request_interpretation","required_claims":["requester"],"required_failure_modes":["wrong_recipient"],"zero_tolerance":["wrong_recipient"],"human_review":{"unsupported_material_assumption":true},"max_verification_burden_for_auto_rely":0,"required_verification_types":["latest-thread"]}

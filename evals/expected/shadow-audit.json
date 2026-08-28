@@ -1,0 +1,1 @@
+{"audit_id":"audit-fixture-1","task":"meeting_request_interpretation","original_reliance_packet":{"run_id":"fixture"},"sampled_reason":"counterfactual fixture sample","independent_verification":{"method":"latest-thread"},"outcome":"confirmed","missed_failure":null,"severity":"none","effect_on_reliance_baseline":"none"}

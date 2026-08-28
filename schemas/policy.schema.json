@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reliance-compiler.local/schemas/policy.schema.json",
+  "title": "Reliance Policy",
+  "type": "object", "additionalProperties": false,
+  "required": ["policy_id", "task", "required_claims", "required_failure_modes", "zero_tolerance", "human_review", "max_verification_burden_for_auto_rely"],
+  "properties": {
+    "policy_id": {"type": "string", "minLength": 1}, "task": {"type": "string", "minLength": 1},
+    "required_claims": {"type": "array", "items": {"type": "string"}}, "required_failure_modes": {"type": "array", "items": {"type": "string"}},
+    "zero_tolerance": {"type": "array", "items": {"type": "string"}},
+    "human_review": {"type": "object", "additionalProperties": {"type": "boolean"}},
+    "max_verification_burden_for_auto_rely": {"type": "integer", "minimum": 0, "maximum": 5},
+    "verification_burden_ceiling": {"type": "integer", "minimum": 0, "maximum": 5},
+    "required_verification_types": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"}
+  }
+}

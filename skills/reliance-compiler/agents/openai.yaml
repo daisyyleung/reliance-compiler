@@ -1,0 +1,7 @@
+interface:
+  display_name: "Reliance Compiler"
+  short_description: "Minimize human verification safely"
+  default_prompt: "Use $reliance-compiler to compile this AI result into evidence-bound claims and the smallest safe verification set."
+
+policy:
+  allow_implicit_invocation: true
